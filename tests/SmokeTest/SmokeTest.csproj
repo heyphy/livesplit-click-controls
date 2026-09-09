@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net481</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LiveSplitPath Condition="'$(LiveSplitPath)' == ''">$(MSBuildThisFileDirectory)../../.deps/LiveSplitDevBuild</LiveSplitPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LiveSplit.Core" HintPath="$(LiveSplitPath)/LiveSplit.Core.dll" Private="false" />
+    <Reference Include="UpdateManager" HintPath="$(LiveSplitPath)/UpdateManager.dll" Private="false" />
+  </ItemGroup>
+</Project>

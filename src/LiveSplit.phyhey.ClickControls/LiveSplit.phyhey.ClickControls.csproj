@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net481</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>LiveSplit.phyhey.ClickControls</AssemblyName>
+    <RootNamespace>LiveSplit.phyhey.ClickControls</RootNamespace>
+    <Version>0.1.0</Version>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <LiveSplitPath Condition="'$(LiveSplitPath)' == ''">$(MSBuildThisFileDirectory)../../.deps/LiveSplitDevBuild</LiveSplitPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LiveSplit.Core">
+      <HintPath>$(LiveSplitPath)/LiveSplit.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UpdateManager">
+      <HintPath>$(LiveSplitPath)/UpdateManager.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <Target Name="CheckLiveSplitReferences" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(LiveSplitPath)/LiveSplit.Core.dll') Or !Exists('$(LiveSplitPath)/UpdateManager.dll')"
+           Text="Set LiveSplitPath to an extracted current LiveSplit directory containing LiveSplit.Core.dll and UpdateManager.dll." />
+  </Target>
+</Project>
