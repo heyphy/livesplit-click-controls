@@ -1,0 +1,55 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Download official LiveSplit Development Build
+        run: |
+          New-Item -ItemType Directory -Force .deps | Out-Null
+          Invoke-WebRequest https://raw.githubusercontent.com/LiveSplit/LiveSplit.github.io/artifacts/LiveSplitDevBuild.zip -OutFile .deps/LiveSplitDevBuild.zip
+          Get-FileHash .deps/LiveSplitDevBuild.zip -Algorithm SHA256 | Format-List
+          Expand-Archive .deps/LiveSplitDevBuild.zip -DestinationPath .deps/LiveSplitDevBuild
+          (Get-Item .deps/LiveSplitDevBuild/LiveSplit.Core.dll).VersionInfo | Format-List FileVersion
+
+      - name: Build component
+        run: dotnet build src/LiveSplit.phyhey.ClickControls/LiveSplit.phyhey.ClickControls.csproj -c Release
+
+      - name: Build smoke test
+        run: dotnet build tests/SmokeTest/SmokeTest.csproj -c Release
+
+      - name: Test component loading and button behavior
+        run: |
+          Copy-Item src/LiveSplit.phyhey.ClickControls/bin/Release/net481/LiveSplit.phyhey.ClickControls.dll .deps/LiveSplitDevBuild/Components/
+          Copy-Item tests/SmokeTest/bin/Release/net481/SmokeTest.exe .deps/LiveSplitDevBuild/
+          Copy-Item .deps/LiveSplitDevBuild/LiveSplit.exe.config .deps/LiveSplitDevBuild/SmokeTest.exe.config
+          & ./.deps/LiveSplitDevBuild/SmokeTest.exe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload component DLL
+        uses: actions/upload-artifact@v6
+        with:
+          name: LiveSplit.phyhey.ClickControls
+          path: src/LiveSplit.phyhey.ClickControls/bin/Release/net481/LiveSplit.phyhey.ClickControls.dll
+          if-no-files-found: error
+          retention-days: 30

@@ -41,6 +41,21 @@ dotnet build src/LiveSplit.phyhey.ClickControls/LiveSplit.phyhey.ClickControls.c
 
 配布するのはComponent DLLのみです。LiveSplit本体の参照DLLを置き換える必要はありません。
 
+## GitHub Actions
+
+push・Pull Request作成/更新時に、[Build and test](.github/workflows/build.yml)が
+Windows環境（.NET SDK 10）でReleaseビルドとスモークテストを実行します。
+GitHubの**Actions → Build and test → Run workflow**から手動実行もできます
+（手動実行にはワークフローがデフォルトブランチに存在する必要があります）。
+
+成功した実行の**Artifacts → LiveSplit.phyhey.ClickControls**からZIPをダウンロードし、
+中のDLLを上記手順でインストールできます。保存期間は30日です。
+テスト失敗時はDLLをアップロードしません。
+
+CIでは毎回、公式の最新Development Buildを取得します。
+参照先の更新により結果が変わる場合があります。使用したZIPのSHA-256と
+LiveSplit.Coreのバージョンはダウンロードステップのログで確認できます。
+
 ## 検証
 
 上記のビルド・展開後、以下で画面を表示しないスモークテストを実行できます。
