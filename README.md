@@ -1,0 +1,1 @@
+# livesplit-click-controls
