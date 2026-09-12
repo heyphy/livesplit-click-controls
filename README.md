@@ -35,6 +35,9 @@ dotnet build src/LiveSplit.phyhey.ClickControls/LiveSplit.phyhey.ClickControls.c
 
 ## インストール
 
+配布版は[GitHub Releases](https://github.com/heyphy/livesplit-click-controls/releases)の
+**Assets → LiveSplit.phyhey.ClickControls.dll**からダウンロードできます（初回公開後）。
+
 1. LiveSplitを終了します。
 2. 生成された`LiveSplit.phyhey.ClickControls.dll`を、`LiveSplit.exe`と同じフォルダーにある`Components`へコピーします。
 3. LiveSplitを起動し、**Edit Layout → + → Control → Click Controls**で追加します。
@@ -55,6 +58,26 @@ GitHubの**Actions → Build and test → Run workflow**から手動実行もで
 CIでは毎回、公式の最新Development Buildを取得します。
 参照先の更新により結果が変わる場合があります。使用したZIPのSHA-256と
 LiveSplit.Coreのバージョンはダウンロードステップのログで確認できます。
+
+## Releaseの公開
+
+`v0.1.0`のようなタグをpushすると、ビルド・スモークテストの成功後に
+GitHub Releaseを自動公開し、テストしたDLLそのものをAssetsへ添付します。
+通常のブランチpush・PR・手動実行ではReleaseを公開しません。
+追加のSecret設定は不要です。
+
+1. csprojの`<Version>`を公開するバージョンに更新します（初回は`0.1.0`）。
+2. ワークフローを含む変更をコミットしてpushします。
+3. そのコミットに対応するタグを作成し、pushします。
+
+```powershell
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+タグは`v` + csprojのVersionと完全一致する必要があります。対応する形式は`v数字.数字.数字`です。
+不一致やテスト失敗時は公開しません。既存Releaseを上書きする処理はありません。
+次回はVersionを更新して、新しいタグ（例: `v0.1.1`）で公開してください。
 
 ## 検証
 
